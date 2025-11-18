@@ -18,6 +18,8 @@ fn main() {
         .read_line(&mut dir_path)
         .expect("Failed to read line");
 
+    dir_path = dir_path.trim().to_string();
+
     if check_path_exists(&dir_path) {
         let mut dart_files = Vec::new();
 
@@ -25,6 +27,7 @@ fn main() {
         let dir_path = path::Path::new(&dir_path).join("lib");
         dfs_traverse_dir(dir_path.to_str().unwrap().to_string(), &mut dart_files);
 
+        let mut all_extracted_strings = Vec::new();
         println!("📄Found {} Dart files:", dart_files.len());
         for file in &dart_files {
             let extracted_strings = run_dart_analyzer(file);
@@ -33,7 +36,8 @@ fn main() {
                 extracted_strings.len(),
                 file
             );
-            export_json(extracted_strings);
+            all_extracted_strings.extend(extracted_strings);
         }
+        export_json(all_extracted_strings);
     }
 }
